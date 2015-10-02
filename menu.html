@@ -1,0 +1,92 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<style type="text/css">
+span {
+	margin-right:15px;
+	position:relative;
+}
+#selector {
+	width:60px;
+	height:10px;
+	background-color:green;
+	position:relative;
+	margin:0px;
+	padding:0px;
+	top:-1px;
+}
+#menu {
+	position:relative;
+}
+#menu span {
+	border-bottom:1px solid #ccc;
+}
+#container {
+	width:960px;
+}
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+<script>
+$('document').ready(function() {
+	//combined all variables to an object syntax
+	var data = {
+		selector : $('#selector'),
+		menu_items : $('#menu span'),
+		headline : $('h1'),
+		adamBot : '',
+		moveDelay : 180,
+		moveFriction : 180, // Bar moves slower as number goes up
+		randColor : function() {
+			var letters = '0123456789ABCDEF'.split('');
+			var color = '#';
+			for (var i = 0; i < 6; i++ ) {
+				color += letters[Math.round(Math.random() * 15)];
+			}
+			return color;
+		}
+	}
+	$('#menu').on('mouseover mouseout click','span',function(event){
+		var $t = $(this);
+		if(!$t.data('state')){ 
+			$t.data('state',{
+				left:$t.position().left + 'px',
+				width:$t.width() + 'px',
+				color:$t.attr('data'),
+				text:$t.text()
+			});
+		}
+		if(event.type == 'mouseover') {
+			var dat = $t.data('state');
+			data.adamBot = setInterval(function() {
+				data.selector.animate({'left':dat.left, 'width':dat.width, 'background-color':dat.color}, data.moveFriction, function() {
+						data.headline.text(dat.text).css('color',dat.color);
+				});
+				clearInterval(data.adamBot);
+			}, data.moveDelay);
+		}
+		else if(event.type == 'mouseout') {
+			if(data.adamBot) {
+				clearInterval(data.adamBot);	
+			}
+		}
+	});
+});
+</script>
+
+</head>
+
+<body>
+<div id="menu">
+	<span data="aqua">HEADLINE #1</span>
+	<span data="purple">HEADLINE #2</span>
+	<span data="green">HEADLINE #3</span>
+	<span data="gray">HEADLINE #4</span>	
+	<span data="black">HEADLINE #5</span>
+	<span data="blue">HEADLINE #6</span>	
+</div>
+<div style="width: 101px; background-color: rgb(0, 255, 255); left: 0px;" id="selector"></div>
+<h1 style="color: rgb(0, 255, 255);">HEADLINE #1</h1>
+<div id="container"></div>
+</body>
+</html>
